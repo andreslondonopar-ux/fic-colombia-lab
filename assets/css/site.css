@@ -75,6 +75,8 @@
 
 * { box-sizing: border-box; }
 
+body.sin-scroll { overflow: hidden; }
+
 body {
   margin: 0;
   background: var(--paper);
@@ -222,26 +224,40 @@ td.num.neg { color: var(--neg); }
 .sin-dato { color: var(--ink-3); font-size: 12px; }
 .vacio { text-align: center; color: var(--ink-3); padding: 26px; }
 
-/* --- panel de detalle --- */
+/* --- panel de detalle (modal) --- */
+.detalle-overlay {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 5vh 20px;
+  background: rgba(18, 20, 26, 0);
+  overflow-y: auto;
+  transition: background .18s ease;
+}
+.detalle-overlay[hidden] { display: none; }
+.detalle-overlay.overlay-visible { background: rgba(18, 20, 26, 0.5); }
+
 .detalle {
+  width: 100%; max-width: 880px;
   background: var(--tarjeta);
   border: 1px solid var(--linea);
   border-radius: 14px;
   padding: 26px 26px 30px;
-  margin-bottom: 44px;
+  box-shadow: 0 24px 60px -20px rgba(0,0,0,.35);
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity .2s ease, transform .2s ease;
+  transform: translateY(10px) scale(.985);
+  transition: opacity .18s ease, transform .18s ease;
 }
-.detalle-visible { opacity: 1; transform: translateY(0); }
+.overlay-visible .detalle { opacity: 1; transform: translateY(0) scale(1); }
 
-.detalle-header { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.detalle-header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.detalle-header > div:first-child { min-width: 0; flex: 1 1 auto; }
 .detalle-eyebrow { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
 .detalle-header h2 { font-family: var(--fuente-display); margin: 0 0 6px; font-size: 22px; text-wrap: balance; color: var(--acento-fuerte); }
 .detalle-sub { margin: 0 0 8px; color: var(--ink-2); font-size: 13.5px; }
-.detalle-acciones { display: flex; align-items: center; gap: 14px; }
+.detalle-acciones { display: flex; align-items: center; gap: 14px; flex-shrink: 0; white-space: nowrap; }
 .detalle-acciones a { color: var(--acento); font-size: 13.5px; text-decoration: none; font-weight: 600; }
 .detalle-acciones a:hover { text-decoration: underline; }
+.detalle-acciones a.enlace-secundario { color: var(--ink-3); font-weight: 500; }
 #cerrarDetalle {
   border: none; background: var(--paper); color: var(--ink-2);
   width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 14px;

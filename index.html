@@ -82,7 +82,11 @@
     </table>
   </section>
 
-  <section id="detalle" class="detalle" hidden>
+
+</main>
+
+<div id="detalleOverlay" class="detalle-overlay" hidden>
+  <section id="detalle" class="detalle" role="dialog" aria-modal="true">
     <div class="detalle-header">
       <div>
         <div class="detalle-eyebrow" id="detalleCategoria"></div>
@@ -91,7 +95,8 @@
         <div id="detallePerfil"></div>
       </div>
       <div class="detalle-acciones">
-        <a id="detalleFicha" target="_blank" rel="noopener">Ficha técnica / dónde comprarlo ↗</a>
+        <a id="detalleFicha" target="_blank" rel="noopener"></a>
+        <a id="detalleFichaGoogle" target="_blank" rel="noopener" class="enlace-secundario" hidden>Buscar ficha exacta ↗</a>
         <button id="cerrarDetalle" aria-label="Cerrar">✕</button>
       </div>
     </div>
@@ -111,8 +116,7 @@
     </div>
     <div id="grafico" class="grafico"></div>
   </section>
-
-</main>
+</div>
 
 <footer class="wrap footer">
   <p>Datos: <a href="https://www.datos.gov.co/Hacienda-y-Cr-dito-P-blico/Rentabilidades-de-los-Fondos-de-Inversi-n-Colectiv/qhpu-8ixx" target="_blank" rel="noopener">Rentabilidades de los Fondos de Inversión Colectiva</a>, Superintendencia Financiera de Colombia. El perfil de riesgo es una clasificación propia por volatilidad histórica (90 días), no una calificación oficial. Herramienta informativa, no constituye recomendación de inversión.</p>

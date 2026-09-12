@@ -18,6 +18,26 @@ const fmtPct = (n, digits = 1) =>
   n === null || n === undefined || Number.isNaN(n) ? "—" : `${n > 0 ? "+" : ""}${n.toFixed(digits)}%`;
 const fmtNum = (n) => (n === null || n === undefined ? "—" : n.toLocaleString("es-CO"));
 
+// Portal oficial de fichas técnicas por gestora (curado a mano, solo las gestoras
+// donde se confirmó la URL real). Cubre las mas grandes por AUM del mercado.
+// No hay una API ni un patron de URL por fondo consistente entre gestoras -> por
+// eso enlazamos al PORTAL de la gestora, no a la ficha exacta del fondo.
+const PORTAL_GESTORA = {
+  "Fiduciaria Bancolombia S.A. Sociedad Fiduciaria":
+    "https://assetmanagement.grupobancolombia.com/wps/portal/asset-management/productos-servicios/fondos-inversion-colectiva/fichas-tecnicas-fondos-inversion/",
+  "Valores Bancolombia S.A. Comisionista De Bolsa":
+    "https://assetmanagement.grupobancolombia.com/wps/portal/asset-management/productos-servicios/fondos-inversion-colectiva/fichas-tecnicas-fondos-inversion/",
+  "Fiduaval": "https://www.avalfiduciaria.com/web/empresas/fichas-tecnicas-fic-fidubog",
+  "Alianza Fiduciaria S.A.": "https://www.alianza.com.co/fichas-tecnicas-fondos-de-inversion-colectiva",
+  "Credicorp Capital": "https://www.credicorpcapital.com/Colombia/Neg/GA/Paginas/FIC.aspx",
+  "Bbva Asset Management S.A. Sociedad Fiduciaria": "https://www.bbvaassetmanagement.com/co/repositorio-de-documentos/",
+  'Fiduciaria Davivienda S.A. Pudiendo Utilizar La Sigla "Fidudavivienda S.A."':
+    "https://fidudavivienda.davivienda.com/wps/portal/fidudavivienda/inicio/F_Productos_y_Servicios/F_Carteras_Colectivas",
+  "Fiduciaria La Previsora S.A.  Sigla Fiduprevisora S.A.": "https://www.fiduprevisora.com.co/fondo-de-inversion/",
+  "Skandia Fiduciaria S.A.": "https://www.skandia.co/fiduciaria/skandia-fondos-de-inversion-colectiva",
+  "Fiduagraria S.A.": "https://www.fiduagraria.gov.co/nuestros-productos/fondos-de-inversion-colectiva.html",
+};
+
 const PERFIL = {
   CONSERVADOR: { label: "Conservador", clase: "riesgo-bajo", corte: 2.2 },
   MODERADO: { label: "Moderado", clase: "riesgo-medio", corte: 9 },
@@ -284,11 +304,19 @@ function renderTabla() {
   }
 }
 
+function cerrarModal() {
+  const overlay = el("detalleOverlay");
+  overlay.classList.remove("overlay-visible");
+  setTimeout(() => (overlay.hidden = true), 180);
+  document.body.classList.remove("sin-scroll");
+}
+
 async function abrirDetalle(fondo) {
-  const panel = el("detalle");
-  panel.hidden = false;
-  requestAnimationFrame(() => panel.classList.add("detalle-visible"));
-  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  const overlay = el("detalleOverlay");
+  overlay.hidden = false;
+  overlay.scrollTop = 0;
+  requestAnimationFrame(() => overlay.classList.add("overlay-visible"));
+  document.body.classList.add("sin-scroll");
 
   el("detalleNombre").textContent = fondo.nombre;
   el("detalleGestora").textContent = fondo.gestora;
@@ -297,9 +325,22 @@ async function abrirDetalle(fondo) {
     ? `<span class="chip ${perfil.clase}">${perfil.label}</span>`
     : "";
   el("detalleCategoria").textContent = titleCase(fondo.categoria);
-  el("detalleFicha").href =
+
+  const portal = PORTAL_GESTORA[fondo.gestora];
+  const busquedaGoogle =
     "https://www.google.com/search?q=" +
     encodeURIComponent(`"${fondo.nombre}" ${fondo.gestora} ficha técnica`);
+
+  if (portal) {
+    el("detalleFicha").href = portal;
+    el("detalleFicha").textContent = "Portal oficial de la gestora ↗";
+    el("detalleFichaGoogle").href = busquedaGoogle;
+    el("detalleFichaGoogle").hidden = false;
+  } else {
+    el("detalleFicha").href = busquedaGoogle;
+    el("detalleFicha").textContent = "Buscar ficha técnica / dónde comprarlo ↗";
+    el("detalleFichaGoogle").hidden = true;
+  }
 
   // Resumen inmediato con lo que ya tenemos (sin esperar el histórico completo)
   renderResumenReportado(fondo);
@@ -464,9 +505,12 @@ function dibujarGrafico() {
 el("buscar").addEventListener("input", renderTabla);
 el("filtroTipo").addEventListener("change", renderTabla);
 el("ordenar").addEventListener("change", renderTabla);
-el("cerrarDetalle").addEventListener("click", () => {
-  el("detalle").classList.remove("detalle-visible");
-  setTimeout(() => (el("detalle").hidden = true), 180);
+el("cerrarDetalle").addEventListener("click", cerrarModal);
+el("detalleOverlay").addEventListener("click", (e) => {
+  if (e.target === el("detalleOverlay")) cerrarModal();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !el("detalleOverlay").hidden) cerrarModal();
 });
 
 document.querySelectorAll(".pill-perfil").forEach((btn) => {
