@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FIC Colombia — comparador de fondos de inversión colectiva</title>
+<meta name="description" content="Explora, compara y revisa el histórico de todos los Fondos de Inversión Colectiva de Colombia con datos oficiales de la Superintendencia Financiera." />
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="stylesheet" href="assets/css/site.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/4.1.0/plotly.min.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">FIC<span>Colombia</span></div>
+    <div class="fuente">Datos oficiales: Superintendencia Financiera de Colombia (datos.gov.co)</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Comparador de Fondos de Inversión Colectiva</h1>
+    <p>
+      Todos los FICs que operan en Colombia, con su valor, rentabilidad histórica y riesgo,
+      calculados directamente del corte diario que publica la Superintendencia Financiera.
+      Sin composición del portafolio: ese dato no lo publica la Superfinanciera para FICs
+      (sí lo hace para fondos de pensión, no para estos) — usa el enlace de "ficha técnica"
+      de cada fondo para profundizar en su política de inversión y dónde comprarlo.
+    </p>
+    <div id="estado" class="estado">Cargando universo de fondos…</div>
+  </section>
+
+  <section class="filtros">
+    <input id="buscar" type="search" placeholder="Buscar por nombre de fondo o gestora…" autocomplete="off" />
+    <select id="filtroTipo">
+      <option value="">Todas las categorías</option>
+    </select>
+    <select id="ordenar">
+      <option value="aum_desc">Ordenar por AUM (mayor a menor)</option>
+      <option value="rent_desc">Rentabilidad anual (mayor a menor)</option>
+      <option value="rent_asc">Rentabilidad anual (menor a mayor)</option>
+      <option value="nombre">Nombre (A-Z)</option>
+    </select>
+  </section>
+
+  <section class="tabla-wrap">
+    <table id="tablaFondos">
+      <thead>
+        <tr>
+          <th>Fondo</th>
+          <th>Gestora</th>
+          <th>Categoría</th>
+          <th>AUM (COP)</th>
+          <th>Inversionistas</th>
+          <th>Rent. anual</th>
+          <th>Rent. mensual</th>
+        </tr>
+      </thead>
+      <tbody id="cuerpoTabla"></tbody>
+    </table>
+  </section>
+
+  <section id="detalle" class="detalle" hidden>
+    <div class="detalle-header">
+      <div>
+        <h2 id="detalleNombre"></h2>
+        <p id="detalleGestora" class="detalle-sub"></p>
+      </div>
+      <div class="detalle-acciones">
+        <a id="detalleFicha" target="_blank" rel="noopener">Buscar ficha técnica / dónde comprarlo ↗</a>
+        <button id="cerrarDetalle" aria-label="Cerrar">✕</button>
+      </div>
+    </div>
+
+    <div class="metricas" id="detalleMetricas"></div>
+
+    <div id="detalleEstado" class="estado"></div>
+    <div id="grafico" class="grafico"></div>
+  </section>
+</main>
+
+<footer class="wrap footer">
+  <p>Datos: <a href="https://www.datos.gov.co/Hacienda-y-Cr-dito-P-blico/Rentabilidades-de-los-Fondos-de-Inversi-n-Colectiv/qhpu-8ixx" target="_blank" rel="noopener">Rentabilidades de los Fondos de Inversión Colectiva</a>, Superintendencia Financiera de Colombia. Corte más reciente disponible. Sin recomendación de inversión — herramienta informativa.</p>
+</footer>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

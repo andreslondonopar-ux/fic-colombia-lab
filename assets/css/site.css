@@ -1,0 +1,136 @@
+:root {
+  --superficie: #f7f8fa;
+  --tarjeta: #ffffff;
+  --tinta: #14181f;
+  --tinta-2: #545b68;
+  --tinta-3: #8b93a1;
+  --borde: #e2e5eb;
+  --acento: #1f6f5c;
+  --acento-suave: #e6f2ef;
+  --rojo: #b3432b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--superficie);
+  color: var(--tinta);
+  font: 15px/1.55 "Segoe UI", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+}
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+
+.topbar {
+  background: var(--tinta);
+  color: #fff;
+  padding-block: 16px;
+}
+.topbar .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.brand { font-size: 20px; font-weight: 700; }
+.brand span { color: #8fd6bf; font-weight: 400; }
+.fuente { font-size: 12px; color: #b9bfc9; }
+
+.intro { padding-block: 28px 12px; }
+h1 { font-size: 24px; margin: 0 0 10px; text-wrap: balance; }
+.intro p { color: var(--tinta-2); max-width: 68ch; }
+
+.estado { color: var(--tinta-3); font-size: 13px; padding: 6px 0; }
+
+.filtros {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  padding-block: 8px 16px;
+}
+.filtros input, .filtros select {
+  font: inherit;
+  padding: 9px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--tarjeta);
+  color: var(--tinta);
+}
+#buscar { flex: 1 1 260px; }
+
+.tabla-wrap {
+  overflow-x: auto;
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  margin-bottom: 28px;
+}
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 10px 14px; white-space: nowrap; font-size: 13.5px; }
+thead th {
+  position: sticky; top: 0;
+  background: var(--acento-suave); color: var(--acento);
+  font-weight: 600; border-bottom: 1px solid var(--borde);
+}
+tbody tr { border-bottom: 1px solid var(--borde); cursor: pointer; }
+tbody tr:hover { background: var(--acento-suave); }
+td.nombre { white-space: normal; max-width: 320px; font-weight: 600; }
+td.num-pos { color: var(--acento); }
+td.num-neg { color: var(--rojo); }
+
+.detalle {
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 20px 22px 26px;
+  margin-bottom: 40px;
+}
+.detalle-header { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.detalle-header h2 { margin: 0 0 4px; font-size: 19px; text-wrap: balance; }
+.detalle-sub { margin: 0; color: var(--tinta-2); font-size: 13.5px; }
+.detalle-acciones { display: flex; align-items: center; gap: 12px; }
+.detalle-acciones a { color: var(--acento); font-size: 13.5px; text-decoration: none; font-weight: 600; }
+.detalle-acciones a:hover { text-decoration: underline; }
+#cerrarDetalle {
+  border: none; background: var(--superficie); color: var(--tinta-2);
+  width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 14px;
+}
+
+.metricas {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px; margin: 18px 0;
+}
+.metrica {
+  background: var(--superficie); border: 1px solid var(--borde);
+  border-radius: 8px; padding: 10px 12px;
+}
+.metrica .valor { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.metrica .etiqueta { font-size: 11.5px; color: var(--tinta-3); text-transform: uppercase; letter-spacing: .02em; }
+
+.grafico { margin-top: 8px; }
+
+.footer { padding-block: 24px 40px; color: var(--tinta-3); font-size: 12px; }
+.footer a { color: var(--tinta-2); }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --superficie: #14171c;
+    --tarjeta: #1c2027;
+    --tinta: #eef0f3;
+    --tinta-2: #a7adb8;
+    --tinta-3: #767d89;
+    --borde: #2b3038;
+    --acento: #4fd1ab;
+    --acento-suave: #16332b;
+    --rojo: #e0725a;
+  }
+  .brand span { color: #4fd1ab; }
+}
+:root[data-theme="dark"] {
+  --superficie: #14171c;
+  --tarjeta: #1c2027;
+  --tinta: #eef0f3;
+  --tinta-2: #a7adb8;
+  --tinta-3: #767d89;
+  --borde: #2b3038;
+  --acento: #4fd1ab;
+  --acento-suave: #16332b;
+  --rojo: #e0725a;
+}
+
+@media (max-width: 640px) {
+  td, th { font-size: 12.5px; padding: 8px 10px; }
+}
