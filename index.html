@@ -4,57 +4,78 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>FIC Colombia — comparador de fondos de inversión colectiva</title>
-<meta name="description" content="Explora, compara y revisa el histórico de todos los Fondos de Inversión Colectiva de Colombia con datos oficiales de la Superintendencia Financiera." />
+<meta name="description" content="Explora, compara y filtra por perfil de riesgo todos los Fondos de Inversión Colectiva de Colombia, con datos oficiales de la Superintendencia Financiera." />
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+
 <link rel="stylesheet" href="assets/css/site.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/4.1.0/plotly.min.js"></script>
 </head>
 <body>
 
 <header class="topbar">
-  <div class="wrap">
+  <div class="wrap topbar-inner">
     <div class="brand">FIC<span>Colombia</span></div>
-    <div class="fuente">Datos oficiales: Superintendencia Financiera de Colombia (datos.gov.co)</div>
+    <div class="fuente">Datos oficiales · Superintendencia Financiera de Colombia</div>
   </div>
 </header>
 
 <main class="wrap">
+
   <section class="intro">
-    <h1>Comparador de Fondos de Inversión Colectiva</h1>
+    <h1>El mercado colombiano de fondos de inversión colectiva, de un vistazo</h1>
     <p>
-      Todos los FICs que operan en Colombia, con su valor, rentabilidad histórica y riesgo,
+      Todos los FICs activos hoy en Colombia, con su valor histórico, rentabilidad y riesgo
       calculados directamente del corte diario que publica la Superintendencia Financiera.
-      Sin composición del portafolio: ese dato no lo publica la Superfinanciera para FICs
-      (sí lo hace para fondos de pensión, no para estos) — usa el enlace de "ficha técnica"
-      de cada fondo para profundizar en su política de inversión y dónde comprarlo.
+      La Superfinanciera no publica la composición del portafolio de los FICs (solo lo hace
+      para fondos de pensión) — usa el enlace de "ficha técnica" de cada fondo para profundizar
+      en su política de inversión y dónde comprarlo.
     </p>
-    <div id="estado" class="estado">Cargando universo de fondos…</div>
   </section>
 
-  <section class="filtros">
-    <input id="buscar" type="search" placeholder="Buscar por nombre de fondo o gestora…" autocomplete="off" />
-    <select id="filtroTipo">
-      <option value="">Todas las categorías</option>
-    </select>
-    <select id="ordenar">
-      <option value="aum_desc">Ordenar por AUM (mayor a menor)</option>
-      <option value="rent_desc">Rentabilidad anual (mayor a menor)</option>
-      <option value="rent_asc">Rentabilidad anual (menor a mayor)</option>
-      <option value="nombre">Nombre (A-Z)</option>
-    </select>
+  <section id="resumenMercado" class="resumen-mercado">
+    <div class="kpi kpi-cargando">Cargando universo de fondos…</div>
   </section>
+
+  <section class="controles">
+    <div class="controles-fila">
+      <input id="buscar" type="search" placeholder="Buscar por nombre de fondo o gestora…" autocomplete="off" />
+      <select id="filtroTipo">
+        <option value="">Todas las categorías</option>
+      </select>
+      <select id="ordenar">
+        <option value="aum_desc">AUM: mayor a menor</option>
+        <option value="rent_desc">Rentabilidad anual: mayor a menor</option>
+        <option value="rent_asc">Rentabilidad anual: menor a mayor</option>
+        <option value="riesgo_asc">Riesgo: menor a mayor</option>
+        <option value="nombre">Nombre A-Z</option>
+      </select>
+    </div>
+    <div class="controles-fila controles-perfil">
+      <span class="controles-etiqueta">Perfil de riesgo:</span>
+      <button class="pill-perfil riesgo-bajo" data-perfil="CONSERVADOR">Conservador</button>
+      <button class="pill-perfil riesgo-medio" data-perfil="MODERADO">Moderado</button>
+      <button class="pill-perfil riesgo-alto" data-perfil="AGRESIVO">Agresivo</button>
+      <span id="conteoResultados" class="conteo-resultados"></span>
+    </div>
+  </section>
+
+  <section id="estado" class="estado"></section>
 
   <section class="tabla-wrap">
     <table id="tablaFondos">
       <thead>
         <tr>
           <th>Fondo</th>
-          <th>Gestora</th>
           <th>Categoría</th>
-          <th>AUM (COP)</th>
-          <th>Inversionistas</th>
-          <th>Rent. anual</th>
-          <th>Rent. mensual</th>
+          <th>Riesgo</th>
+          <th class="th-num">AUM</th>
+          <th class="th-num">Inversionistas</th>
+          <th class="th-num">Rent. anual</th>
+          <th>Últimos 90 días</th>
         </tr>
       </thead>
       <tbody id="cuerpoTabla"></tbody>
@@ -64,24 +85,37 @@
   <section id="detalle" class="detalle" hidden>
     <div class="detalle-header">
       <div>
+        <div class="detalle-eyebrow" id="detalleCategoria"></div>
         <h2 id="detalleNombre"></h2>
         <p id="detalleGestora" class="detalle-sub"></p>
+        <div id="detallePerfil"></div>
       </div>
       <div class="detalle-acciones">
-        <a id="detalleFicha" target="_blank" rel="noopener">Buscar ficha técnica / dónde comprarlo ↗</a>
+        <a id="detalleFicha" target="_blank" rel="noopener">Ficha técnica / dónde comprarlo ↗</a>
         <button id="cerrarDetalle" aria-label="Cerrar">✕</button>
       </div>
     </div>
 
+    <h3 class="detalle-seccion">Reportado por la Superfinanciera (corte más reciente)</h3>
+    <div class="metricas" id="detalleReportado"></div>
+
+    <h3 class="detalle-seccion">Calculado a partir del histórico completo</h3>
     <div class="metricas" id="detalleMetricas"></div>
 
-    <div id="detalleEstado" class="estado"></div>
+    <div class="grafico-header">
+      <div id="detalleEstado" class="estado"></div>
+      <div class="toggle-vista">
+        <button data-vista="valor" class="activo">Valor de la unidad</button>
+        <button data-vista="normalizado">% desde el inicio</button>
+      </div>
+    </div>
     <div id="grafico" class="grafico"></div>
   </section>
+
 </main>
 
 <footer class="wrap footer">
-  <p>Datos: <a href="https://www.datos.gov.co/Hacienda-y-Cr-dito-P-blico/Rentabilidades-de-los-Fondos-de-Inversi-n-Colectiv/qhpu-8ixx" target="_blank" rel="noopener">Rentabilidades de los Fondos de Inversión Colectiva</a>, Superintendencia Financiera de Colombia. Corte más reciente disponible. Sin recomendación de inversión — herramienta informativa.</p>
+  <p>Datos: <a href="https://www.datos.gov.co/Hacienda-y-Cr-dito-P-blico/Rentabilidades-de-los-Fondos-de-Inversi-n-Colectiv/qhpu-8ixx" target="_blank" rel="noopener">Rentabilidades de los Fondos de Inversión Colectiva</a>, Superintendencia Financiera de Colombia. El perfil de riesgo es una clasificación propia por volatilidad histórica (90 días), no una calificación oficial. Herramienta informativa, no constituye recomendación de inversión.</p>
 </footer>
 
 <script src="assets/js/app.js"></script>
